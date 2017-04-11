@@ -10,28 +10,28 @@ using namespace std;
 #define Total_Service_Time 540
 
 static int CustomerNumber = 0;
-static float CurrentTime = 0;//µ±Ç°Ê±¼ä
-static float LastCustomerArrivalTime;//ÉÏÒ»¹Ë¿Íµ½À´Ê±¼ä
-static float CusWaitTotalTime = 0;//¹Ë¿ÍµÈ´ıÊ±¼ä×Ü
+static float CurrentTime = 0;//å½“å‰æ—¶é—´
+static float LastCustomerArrivalTime;//ä¸Šä¸€é¡¾å®¢åˆ°æ¥æ—¶é—´
+static float CusWaitTotalTime = 0;//é¡¾å®¢ç­‰å¾…æ—¶é—´æ€»
 
-vector<Customer*> CustomerVector;//¹Ë¿ÍÊı×é
-Reception r0, r1;//Á½¸ö·şÎñÌ¨
+vector<Customer*> CustomerVector;//é¡¾å®¢æ•°ç»„
+Reception r0, r1;//ä¸¤ä¸ªæœåŠ¡å°
 
 int SelectR(float r0_time,float r1_time);
 void UpdateData(int reception,int cus);
 
 void main()
 {
-	Setsrand();//ÉèÖÃËæ»úÊıÖÖ×Ó£¬Ê¹Ã¿´Î»ñµÃµÄËæ»úĞòÁĞ²»Í¬
+	Setsrand();//è®¾ç½®éšæœºæ•°ç§å­ï¼Œä½¿æ¯æ¬¡è·å¾—çš„éšæœºåºåˆ—ä¸åŒ
 	//srand((unsigned)time(NULL));
-	float MeanArrialTime;//¹Ë¿ÍÆ½¾ùµ½´ïÊ±¼ä
-	float MeanServiceTime;//¹Ë¿ÍËùĞèÆ½¾ù·şÎñÊ±¼ä
-	cout << "ÇëÊäÈë¹Ë¿ÍÆ½¾ùµ½´ïÊ±¼ä£º\n";
+	float MeanArrialTime;//é¡¾å®¢å¹³å‡åˆ°è¾¾æ—¶é—´
+	float MeanServiceTime;//é¡¾å®¢æ‰€éœ€å¹³å‡æœåŠ¡æ—¶é—´
+	cout << "è¯·è¾“å…¥é¡¾å®¢å¹³å‡åˆ°è¾¾æ—¶é—´ï¼š\n";
 	cin >> MeanArrialTime;
-	cout << "ÇëÊäÈë¹Ë¿ÍËùĞèÆ½¾ù·şÎñÊ±¼ä£º\n";
+	cout << "è¯·è¾“å…¥é¡¾å®¢æ‰€éœ€å¹³å‡æœåŠ¡æ—¶é—´ï¼š\n";
 	cin >> MeanServiceTime;
 	float temp_arrive = 0;
-	while (true)  //²úÉú¹Ë¿Í
+	while (true)  //äº§ç”Ÿé¡¾å®¢
 	{
 		temp_arrive = CurrentTime + Possion(MeanArrialTime);
 		if (temp_arrive > Total_Service_Time)
@@ -46,42 +46,22 @@ void main()
 		CustomerVector.push_back(newCus);
 	}
 
-	//·şÎñ°²ÅÅ
+	//æœåŠ¡å®‰æ’
 	for (int i = 0; i < CustomerNumber; i++)
 	{
-		//Ñ¡È¡·şÎñÌ¨
+		//é€‰å–æœåŠ¡å°
 		int s = SelectR(r0.LastEndTime, r1.LastEndTime);
 		UpdateData(s,i);
 	}
 
-	cout << "·şÎñÌ¨0£º·şÎñ¹Ë¿ÍÊı£º" << r0.TotalCus.size() << " ¿ÕÏĞÊ±¼ä£º" << r0.FreeTime << "×Ü·şÎñÊ±¼ä£º" << r0.ServiceTotalTime << "\n";
-	cout << "·şÎñÌ¨1£º·şÎñ¹Ë¿ÍÊı£º" << r1.TotalCus.size() << " ¿ÕÏĞÊ±¼ä£º" << r1.FreeTime << "×Ü·şÎñÊ±¼ä£º" << r1.ServiceTotalTime << "\n";
+	cout << "æœåŠ¡å°0ï¼šæœåŠ¡é¡¾å®¢æ•°ï¼š" << r0.TotalCus.size() << " ç©ºé—²æ—¶é—´ï¼š" << r0.FreeTime << "æ€»æœåŠ¡æ—¶é—´ï¼š" << r0.ServiceTotalTime << "\n";
+	cout << "æœåŠ¡å°1ï¼šæœåŠ¡é¡¾å®¢æ•°ï¼š" << r1.TotalCus.size() << " ç©ºé—²æ—¶é—´ï¼š" << r1.FreeTime << "æ€»æœåŠ¡æ—¶é—´ï¼š" << r1.ServiceTotalTime << "\n";
 	float Rfree = r0.FreeTime + r1.FreeTime;
 	float Rservice = r0.ServiceTotalTime + r1.ServiceTotalTime;
-	cout << "¹Ë¿Í×ÜÊı£º" << CustomerVector.size() << endl;
-	cout << "¹Ë¿ÍÆ½¾ùÅÅ¶ÓÊ±¼ä£º" << CusWaitTotalTime/CustomerNumber << endl;
-	cout << "¹Ë¿ÍÆ½¾ù¶ºÁôÊ±¼ä£º" << (CusWaitTotalTime + Rservice) / CustomerNumber << endl;
-	cout << "·şÎñÌ¨ÀûÓÃÂÊ£º" << Rservice / (Rfree + Rservice) << endl;
-
-	//for (int i = 0; i < CustomerVector.size(); i++)
-	//{
-	//	cout << CustomerVector[i]->CusNo << ":µ½´ïÊ±¼ä£º" << CustomerVector[i]->ArrivalTime << " ·şÎñÊ±¼ä£º" << CustomerVector[i]->NeedServiceTime;
-	//	cout << "  ¿ªÊ¼Ê±¼ä£º" << CustomerVector[i]->StartTime << "  µÈ´ıÊ±¼ä£º" << CustomerVector[i]->WaitTime << endl;
-	//}
-
-	/*Possion Test*/
-	/*int p;
-	for (int i = 0; i < 30; i++)
-	{
-		p = possion();
-		printf("%d\n", p);
-	}*/
-	
-	/*Normal_Gauss Test*/
-	/*double g1 = Normal_Gauss(5,1);
-	double g2 = Normal_Gauss(5,1);
-	cout << g1 << endl;
-	cout << g2 << endl;*/
+	cout << "é¡¾å®¢æ€»æ•°ï¼š" << CustomerVector.size() << endl;
+	cout << "é¡¾å®¢å¹³å‡æ’é˜Ÿæ—¶é—´ï¼š" << CusWaitTotalTime/CustomerNumber << endl;
+	cout << "é¡¾å®¢å¹³å‡é€—ç•™æ—¶é—´ï¼š" << (CusWaitTotalTime + Rservice) / CustomerNumber << endl;
+	cout << "æœåŠ¡å°åˆ©ç”¨ç‡ï¼š" << Rservice / (Rfree + Rservice) << endl;
 
 	system("pause");
 }
@@ -90,9 +70,9 @@ int SelectR(float r0_time, float r1_time)
 {
 	int small;
 	if (r0_time == r1_time)
-		small = (int)(2 * rand() / (RAND_MAX + 1.0)); //Ëæ»úÑ¡ÔñÒ»¸ö·şÎñÌ¨0 / 1
+		small = (int)(2 * rand() / (RAND_MAX + 1.0)); //éšæœºé€‰æ‹©ä¸€ä¸ªæœåŠ¡å°0 / 1
 	else
-		small = r0_time < r1_time ? 0 : 1;//½ÏÔç½áÊøÉÏÒ»¹Ë¿Í·şÎñµÄ
+		small = r0_time < r1_time ? 0 : 1;//è¾ƒæ—©ç»“æŸä¸Šä¸€é¡¾å®¢æœåŠ¡çš„
 	return small;
 }
 
